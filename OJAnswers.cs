@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.IO;
 
 public static class OJAnswers
 {
@@ -175,7 +177,6 @@ public static class OJAnswers
         for(int i = 0; i < n; i++)
         {
             var temp = i.ToString().ToCharArray().Select(i => int.Parse(i.ToString())).ToList();
-            temp.Select(i => Math.Pow(i, temp.Count())).Sum();
             if(temp.Select(i => Math.Pow(i, temp.Count())).Sum() == i)
             {
                 Console.Write($"{i} ");
@@ -456,13 +457,14 @@ public static class OJAnswers
     {
         double masofaKvadrat = Math.Pow(cx - x, 2) + Math.Pow(cy - y, 2);
 
-        return masofaKvadrat < Math.Pow(r, 2);
+        return masofaKvadrat < Math.Pow(r, 2);  
     }
 
     private static bool _kesibOtadimi(int x1, int y1, int x2, int y2, int cx, int cy, int r)
     {
         return _isInside(x1, y1, cx, cy, r) != _isInside(x2, y2, cx, cy, r);
     }
+    
     public static void Problem83()
     {
         int t = int.Parse(Console.ReadLine());
@@ -494,8 +496,181 @@ public static class OJAnswers
         int t = int.Parse(Console.ReadLine());
         while(t-- != 0)
         {
-            
+            var l = _readIntList();
+            var average = (l.Sum() - l[0]) / l[0];
+            double averageCount = l.Where(i => i > average).Count();
+            var result = Math.Round(averageCount / l[0] * 100, 3);
+            Console.WriteLine($"{result.ToString("0.000")}%");
         }
+    }
+
+    public static void Problem86()
+    {
+        int n = int.Parse(Console.ReadLine());
+        var str = Console.ReadLine().ToCharArray().ToList();
+
+        char maxchar = '0';
+        int maxmax = 0;
+
+        for (int i = 0; i < str.Count(); i++)
+        {
+            int minmax = 0;
+            for(int j = 0; j <= i; j++)
+            {
+                if(str[i] == str[j])
+                {
+                    minmax++;
+                }
+            }
+            if(minmax > maxmax)
+            {
+                maxchar = str[i];
+                maxmax = minmax;
+            }
+        }
+        Console.WriteLine($"{maxchar} {maxmax}");
+    }
+
+    //Josephus 87
+    private static int Josephus(int n, int k)
+    {
+        if(n == 1) return 1;
+
+        return (Josephus(n - 1, k) + k - 1) % n + 1;
+    }
+    public static void Problem87()
+    {
+        var nk = _readIntList();
+        int n = nk[0];
+        var list = new List<string>();
+        while(n-- != 0)
+        {
+            list.Add(Console.ReadLine());
+        }
+        int remainder = Josephus(list.Count(), nk[1]);
+        Console.WriteLine($"{list[remainder-1]}");
+    }
+
+    // Taksi 88
+    private static double ComputeDistance(int x, int y)
+        => Math.Sqrt(x * x + y * y);
+    public static void Problem88()
+    {
+        //helper vars
+        double mostneardistance = 1000;
+        string mostnearrusum = "";
+        int n = int.Parse(Console.ReadLine());
+        var list = new List<ArrayList>();
+        for(int i = 0; i < n; i++)
+        {
+            var elem = Console.ReadLine().Split().ToList();
+            var arrList = new ArrayList();
+            arrList.Add(elem[0]);
+            arrList.Add(elem[1]);
+            arrList.Add(elem[2]);
+            list.Add(arrList);
+        }
+
+        for(int i = 0; i < n; i++)
+        {
+            var distance = ComputeDistance(int.Parse(list[i][0].ToString()), int.Parse(list[i][1].ToString()));
+            if(distance < mostneardistance)
+            {
+                mostneardistance = distance;
+                mostnearrusum = list[i][2].ToString();
+            }            
+        }
+        Console.WriteLine($"{mostnearrusum} {mostneardistance.ToString("0.00")}");
+        
+    }
+
+    public static void Problem89()
+    {
+        var fileText = File.ReadAllText("input.txt").Split('\n').ToList();
+        int n = int.Parse(fileText[0]);
+        fileText.Remove(n.ToString());
+        fileText.Sort();
+        for(int i = 0; i < n; i++)
+        {
+            File.AppendAllText("output.txt", $"{i + 1}. " + fileText[i] + '\n');
+        }
+    }
+
+    // Sorting 90
+    private static void BubbleSort(List<int> list, int n)
+    {
+        for(int i = 0; i < n - 1; i++)
+        {
+            for (int j = 0; j < n - i - 1; j++)
+            {
+                if(list[j] > list[j + 1])
+                {
+                    int temp = list[j];
+                    list[j] = list[j + 1];
+                    list[j + 1] = temp;
+                }
+            }
+        }
+    }
+ 
+    private static void SelectionSort(List<int> list, int n)
+    {
+        for(int i = 0; i < n - 1; i++)
+        {
+            int minIndex = i;
+            for(int j = i + 1; j < n; j++)
+            {
+                if(list[j] < list[minIndex])
+                {
+                    minIndex = j;
+                }
+            }
+            int temp = list[minIndex];
+            list[minIndex] = list[i];
+            list[i] = temp;
+        }
+    }
+ 
+    private static void InsertionSort(List<int> list, int n)
+    {
+        for (int i = 1; i < n; ++i) 
+        {
+            int key = list[i];
+            int j = i - 1;
+            while (j >= 0 && list[j] > key) 
+            {
+                list[j + 1] = list[j];
+                j = j - 1;
+            }
+            list[j + 1] = key;
+        }
+    }
+
+    private static void PrintIntList(List<int> list)
+    {
+        list.ForEach(i => Console.Write($"{i} "));
+        Console.WriteLine();
+    }
+    public static void Problem90()
+    {
+        int n = int.Parse(Console.ReadLine());
+        
+        var list = _readIntList();
+        BubbleSort(list, n);
+        PrintIntList(list);
+
+        list = _readIntList();
+        SelectionSort(list, n);
+        PrintIntList(list);
+
+        list = _readIntList();
+        InsertionSort(list, n);
+        PrintIntList(list);
+    }
+
+    public static void Problem91()
+    {
+        
     }
 }
     

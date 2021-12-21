@@ -7,7 +7,7 @@ int main()
     int n = 0;
     fscanf(input, "%d", n);
     char names[100][100];
-    fprintf(output, "")
+    fprintf(output, "");
 
     return 0;
 }

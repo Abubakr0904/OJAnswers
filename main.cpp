@@ -1,28 +1,36 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long int ll;
 
-int main()
+int getOccurence(int n, int d)
 {
-	ll t, n, a, b, c, d;
-	cin >> t;
-	while(t)
+	int result = 0; // Initialize result
+	int itr = d;
+	while (itr <= n)
 	{
-		ll count = 0;
-		cin >> n >> a >> b >> c >> d;
-		ll arr[n];
-		for(int i = 1; i <= n; i++)
+		if (itr%10 == d)
+			result++;
+		if (itr != 0 && itr/10 == d)
 		{
-			arr[i-1] = i;
+			result++;
+			itr++;
 		}
-		for(int i = 0; i < n; i++)
-		{
-			if(arr[i] % a != 0 && arr[i] % b != 0 && arr[i] % c != 0 && arr[i] % d != 0)
-			{
-				count++;
-			}
-		}
-		printf("%lld\n", count);
-		t--;
+		else if (itr/10 == d-1)
+			itr = itr + (10 - d);
+		else
+			itr = itr+10;
 	}
+	return result;
+}
+
+int main(void)
+{
+	int a, b;
+	cin >> a >> b;
+
+	for(int i = 0; i < 10; i++)
+	{
+		
+	}
+	cout << getOccurence(a, d);
+	return 0;
 }
